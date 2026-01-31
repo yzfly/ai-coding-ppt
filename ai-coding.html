@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>如何用好AI编程 - 云中江树</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --accent-orange: #FF6B35;
+            --accent-gradient: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Slide Container */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 100px;
+            background: var(--bg-color);
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+        }
+
+        h1.huge {
+            font-size: 7rem;
+        }
+
+        h2 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        h3 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        p {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--text-muted);
+            line-height: 1.5;
+            max-width: 900px;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+        }
+
+        .author-tag {
+            display: inline-block;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            color: var(--accent-orange);
+            font-weight: 500;
+            margin-top: 3rem;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--accent-orange);
+            border-radius: 30px;
+        }
+
+        /* Layout */
+        .layout-center {
+            text-align: center;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            width: 100%;
+            max-width: 1400px;
+            align-items: center;
+        }
+
+        /* List Styles */
+        ul.zen-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul.zen-list li {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            padding-left: 0;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.5;
+        }
+
+        ul.zen-list li strong {
+            font-weight: 700;
+            color: #fff;
+            display: block;
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+        }
+
+        ul.zen-list li span {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        /* Accent Elements */
+        .accent-text {
+            color: var(--accent-orange);
+        }
+
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Big Background Number */
+        .big-bg-num {
+            position: absolute;
+            top: 50%;
+            right: 5%;
+            transform: translateY(-50%);
+            font-size: 25rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            z-index: -1;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        /* Chapter Label */
+        .chapter-label {
+            font-size: 1rem;
+            letter-spacing: 5px;
+            color: var(--accent-orange);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        /* Icon Container */
+        .icon-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 30px;
+            background: rgba(255, 107, 53, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .icon-container i {
+            width: 60px;
+            height: 60px;
+            color: var(--accent-orange);
+        }
+
+        /* Animations */
+        .fade-up {
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.45s; }
+        .delay-4 { animation-delay: 0.6s; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Line */
+        .progress-line {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+            transition: width 0.5s ease;
+            z-index: 100;
+        }
+
+        /* Page Number */
+        .page-number {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.3);
+            z-index: 100;
+        }
+
+        /* Link Styles */
+        a.social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        a.social-link:hover {
+            color: #fff;
+            border-color: var(--accent-orange);
+            background: rgba(255,107,53,0.1);
+        }
+
+        /* Print Styles */
+        @media print {
+            @page {
+                size: 1920px 1080px;
+                margin: 0;
+            }
+
+            html, body {
+                width: 1920px !important;
+                height: 1080px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
+            .slide {
+                page-break-after: always;
+                break-inside: avoid;
+                width: 1920px !important;
+                height: 1080px !important;
+                position: relative !important;
+            }
+
+            .fade-up {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Slide 1: Cover -->
+    <div class="slide layout-center active">
+        <div class="big-bg-num" style="font-size: 22rem; right: 10%;">AI</div>
+        <p class="chapter-label fade-up">AI CODING</p>
+        <h1 class="huge fade-up delay-1">如何用好<br><span class="gradient-text">AI 编程?</span></h1>
+        <div class="author-tag fade-up delay-2">云中江树</div>
+    </div>
+
+    <!-- Slide 2: Formula -->
+    <div class="slide layout-center">
+        <div class="big-bg-num" style="font-size: 20rem; opacity: 0.02;">Q</div>
+        <div class="chapter-label fade-up">AI CODING FORMULA</div>
+
+        <!-- Formula Display -->
+        <div class="fade-up delay-1" style="margin-bottom: 4rem;">
+            <span style="font-size: 6rem; font-weight: 300; color: #fff;">Q</span>
+            <span style="font-size: 4rem; font-weight: 300; color: var(--text-muted); margin: 0 1rem;">=</span>
+            <span style="font-size: 4rem; font-weight: 300; color: var(--text-muted);">f (</span>
+            <span style="font-size: 7rem; font-weight: 900; color: var(--accent-orange);">P</span>
+            <span style="font-size: 4rem; font-weight: 300; color: var(--text-muted);">,</span>
+            <span style="font-size: 3.5rem; font-weight: 500; color: rgba(255,255,255,0.7); margin: 0 0.3rem;">k</span>
+            <span style="font-size: 4rem; font-weight: 300; color: var(--text-muted);">,</span>
+            <span style="font-size: 2rem; font-weight: 400; color: rgba(255,255,255,0.4); margin: 0 0.3rem;">t</span>
+            <span style="font-size: 4rem; font-weight: 300; color: var(--text-muted);">)</span>
+        </div>
+
+        <!-- Variables Explanation -->
+        <div class="fade-up delay-2" style="display: flex; gap: 5rem; align-items: flex-end; margin-top: 2rem;">
+            <!-- P - Practice -->
+            <div style="text-align: center;">
+                <div style="font-size: 5rem; font-weight: 900; color: var(--accent-orange); line-height: 1;">P</div>
+                <div style="font-size: 1.4rem; color: #fff; margin-top: 1rem; font-weight: 500;">Practice</div>
+                <div style="font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem;">大量练习</div>
+                <div style="margin-top: 1rem; padding: 0.4rem 1rem; background: rgba(255,107,53,0.2); border-radius: 20px; font-size: 1rem; color: var(--accent-orange);">最大</div>
+            </div>
+
+            <!-- k - Knowledge -->
+            <div style="text-align: center;">
+                <div style="font-size: 3rem; font-weight: 500; color: rgba(255,255,255,0.7); line-height: 1;">k</div>
+                <div style="font-size: 1.2rem; color: #fff; margin-top: 1rem; font-weight: 500;">Knowledge</div>
+                <div style="font-size: 1rem; color: var(--text-muted); margin-top: 0.5rem;">少量知识</div>
+                <div style="margin-top: 1rem; padding: 0.3rem 0.8rem; background: rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.9rem; color: rgba(255,255,255,0.6);">小</div>
+            </div>
+
+            <!-- t - Talent -->
+            <div style="text-align: center;">
+                <div style="font-size: 1.8rem; font-weight: 400; color: rgba(255,255,255,0.4); line-height: 1;">t</div>
+                <div style="font-size: 1rem; color: rgba(255,255,255,0.6); margin-top: 1rem; font-weight: 500;">Talent</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">天赋</div>
+                <div style="margin-top: 1rem; padding: 0.2rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 20px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">最小</div>
+            </div>
+        </div>
+
+        <p class="fade-up delay-3" style="margin-top: 4rem; font-size: 1.6rem; max-width: 700px;">
+            AI Coding 的质量来自于<span class="accent-text">大量的练习</span>，<br>
+            少量的知识，和最少量的天赋
+        </p>
+    </div>
+
+    <!-- Slide 3: Practice -->
+    <div class="slide layout-center">
+        <div class="big-bg-num">P</div>
+        <div class="chapter-label fade-up">PRACTICE AI CODING</div>
+        <h1 class="fade-up delay-1"><span class="gradient-text" style="font-size: 7rem;">P:</span> 大量练习</h1>
+
+        <!-- Practice Methods -->
+        <div class="fade-up delay-2" style="display: flex; gap: 2rem; margin-top: 4rem; align-items: stretch;">
+            <!-- Tool Building -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2.5rem 3rem; text-align: center; flex: 1;">
+                <i data-lucide="wrench" style="width: 48px; height: 48px; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;"></i>
+                <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.8rem;">打造工具</h3>
+                <p style="font-size: 1.1rem; color: var(--text-muted); white-space: nowrap;">构建自己的效率工具</p>
+            </div>
+
+            <!-- Office Work -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2.5rem 3rem; text-align: center; flex: 1;">
+                <i data-lucide="file-text" style="width: 48px; height: 48px; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;"></i>
+                <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.8rem;">日常办公</h3>
+                <p style="font-size: 1.1rem; color: var(--text-muted); white-space: nowrap;">PPT · 文档 · 数据处理</p>
+            </div>
+
+            <!-- Open Imagination -->
+            <div style="background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.3); border-radius: 16px; padding: 2.5rem 3rem; text-align: center; flex: 1;">
+                <i data-lucide="sparkles" style="width: 48px; height: 48px; color: var(--accent-orange); margin-bottom: 1.5rem;"></i>
+                <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.8rem;">打开想象空间</h3>
+                <p style="font-size: 1.1rem; color: var(--text-muted); font-family: monospace; white-space: nowrap;">openclawd</p>
+            </div>
+        </div>
+
+        <!-- Anytime Anywhere -->
+        <div class="fade-up delay-3" style="margin-top: 4rem; text-align: center;">
+            <p style="font-size: 2.2rem; color: #fff; font-weight: 300; letter-spacing: 2px;">
+                任何时间 · 任何地点 · 任何场景
+            </p>
+        </div>
+    </div>
+
+    <!-- Slide 4: Knowledge -->
+    <div class="slide layout-center">
+        <div class="big-bg-num" style="font-size: 18rem; opacity: 0.02;">k</div>
+        <div class="chapter-label fade-up">AI CODING KNOWLEDGE</div>
+        <h1 class="fade-up delay-1"><span class="gradient-text" style="font-size: 5rem;">k:</span> 少量知识</h1>
+
+        <!-- Knowledge Items -->
+        <div class="fade-up delay-2" style="display: flex; gap: 2rem; margin-top: 4rem; align-items: stretch;">
+            <!-- AI Tools -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2.5rem 3rem; text-align: center; flex: 1;">
+                <i data-lucide="terminal" style="width: 48px; height: 48px; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;"></i>
+                <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.8rem;">AI 编程工具</h3>
+                <p style="font-size: 1.1rem; color: var(--text-muted); white-space: nowrap;">Claude Code · Codex · Trae</p>
+            </div>
+
+            <!-- AI Basics -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2.5rem 3rem; text-align: center; flex: 1;">
+                <i data-lucide="cpu" style="width: 48px; height: 48px; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;"></i>
+                <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.8rem;">AI 基础</h3>
+                <p style="font-size: 1.1rem; color: var(--text-muted); white-space: nowrap;">了解 AI 的基本原理</p>
+            </div>
+
+            <!-- Programming Basics -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2.5rem 3rem; text-align: center; flex: 1;">
+                <i data-lucide="book-open" style="width: 48px; height: 48px; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;"></i>
+                <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.8rem;">编程基础</h3>
+                <p style="font-size: 1.1rem; color: var(--text-muted); white-space: nowrap;">基本概念即可</p>
+            </div>
+        </div>
+
+        <!-- Key Message -->
+        <div class="fade-up delay-3" style="margin-top: 4rem; text-align: center;">
+            <p style="font-size: 1.8rem; color: #fff; font-weight: 300;">
+                跨越安装 AI 的鸿沟，<span class="accent-text">按需学习知识</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Slide 5: Talent -->
+    <div class="slide layout-center">
+        <div class="big-bg-num" style="font-size: 15rem; opacity: 0.02;">t</div>
+        <div class="chapter-label fade-up">AI CODING TALENT</div>
+        <h1 class="fade-up delay-1"><span class="gradient-text" style="font-size: 3.5rem;">t:</span> 最小天赋</h1>
+
+        <!-- Core Concept - Visual -->
+        <div class="fade-up delay-2" style="margin-top: 4rem; display: flex; align-items: center; gap: 3rem;">
+            <!-- 破 -->
+            <div style="text-align: center;">
+                <div style="font-size: 8rem; font-weight: 900; color: rgba(255,255,255,0.3); line-height: 1;">破</div>
+                <div style="font-size: 1rem; color: var(--text-muted); margin-top: 0.5rem; letter-spacing: 2px;">打破旧我</div>
+            </div>
+
+            <!-- Arrow -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                <i data-lucide="arrow-right" style="width: 48px; height: 48px; color: var(--accent-orange);"></i>
+            </div>
+
+            <!-- 立 -->
+            <div style="text-align: center;">
+                <div style="font-size: 8rem; font-weight: 900; color: #fff; line-height: 1;">立</div>
+                <div style="font-size: 1rem; color: var(--accent-orange); margin-top: 0.5rem; letter-spacing: 2px;">重塑新我</div>
+            </div>
+        </div>
+
+        <!-- Key Message -->
+        <div class="fade-up delay-3" style="margin-top: 5rem; text-align: center; padding: 1.5rem 3rem; background: rgba(255,255,255,0.03); border-radius: 40px; border: 1px solid rgba(255,255,255,0.08);">
+            <p style="font-size: 1.6rem; color: var(--text-muted); font-weight: 300; margin: 0;">
+                不是学不会，是<span class="accent-text">不愿改变</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Slide 6: Inca Empire -->
+    <div class="slide" style="padding: 0;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;">
+            <img src="im.jpg" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.4;" alt="Inca Empire">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.3) 100%);"></div>
+        </div>
+        <div style="position: relative; z-index: 1; text-align: center; padding: 60px; display: flex; flex-direction: column; justify-content: center; height: 100%;">
+            <!-- Story Intro -->
+            <p class="fade-up" style="font-size: 1.2rem; color: var(--accent-orange); letter-spacing: 4px; margin-bottom: 3rem;">最后：分享一个故事</p>
+
+            <h1 class="fade-up delay-1" style="font-size: 4.5rem; line-height: 1.4;">
+                <span class="gradient-text" style="font-size: 6rem;">180 人</span><br>
+                <span style="font-size: 2.5rem; font-weight: 300; color: var(--text-muted);">征服了</span><br>
+                <span style="color: #fff;">千万人口的印加帝国</span>
+            </h1>
+            <p class="fade-up delay-2" style="margin-top: 2rem; font-size: 1.3rem; color: var(--text-muted);">
+                1533年 · 皮萨罗活捉印加皇帝阿塔瓦尔帕
+            </p>
+
+            <!-- New Species -->
+            <div class="fade-up delay-3" style="margin-top: 4rem; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="font-size: 2.5rem; color: #fff; font-weight: 700;">
+                    <span class="gradient-text">新物种</span>，来了！
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: About Me -->
+    <div class="slide layout-center">
+        <div class="big-bg-num">Me</div>
+        <div class="chapter-label fade-up">ABOUT ME</div>
+        <h1 class="fade-up delay-1" style="font-size: 5rem;">云中江树</h1>
+        <p class="fade-up delay-1" style="margin-top: 1rem; font-size: 1.6rem;">
+            <span class="accent-text">WhoBot AI 合伙人</span> · 微软 MVP · TRAE Expert
+        </p>
+
+        <!-- Tags -->
+        <div class="fade-up delay-2" style="display: flex; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; justify-content: center;">
+            <div style="padding: 0.8rem 1.5rem; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.3); border-radius: 30px;">
+                <span style="color: var(--accent-orange); font-size: 1.2rem;">LangGPT 社区创始人</span>
+            </div>
+            <div style="padding: 0.8rem 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px;">
+                <span style="color: #fff; font-size: 1.2rem;">GitHub 万星开源项目作者</span>
+            </div>
+            <div style="padding: 0.8rem 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px;">
+                <span style="color: #fff; font-size: 1.2rem;">畅销书作者</span>
+            </div>
+        </div>
+
+        <!-- GitHub Link -->
+        <div class="fade-up delay-3" style="margin-top: 3rem;">
+            <a href="https://github.com/yzfly" target="_blank" class="social-link">
+                <i data-lucide="github" style="width: 20px; height: 20px;"></i>
+                github.com/yzfly
+            </a>
+        </div>
+    </div>
+
+    <!-- Progress Line -->
+    <div class="progress-line" id="progressLine"></div>
+
+    <!-- Page Number -->
+    <div class="page-number" id="pageNumber">1 / 7</div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressLine = document.getElementById('progressLine');
+        const pageNumber = document.getElementById('pageNumber');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                    // Reset animations
+                    const animated = slide.querySelectorAll('.fade-up');
+                    animated.forEach(el => {
+                        el.style.animation = 'none';
+                        el.offsetHeight;
+                        el.style.animation = '';
+                    });
+                }
+            });
+            progressLine.style.width = `${((index + 1) / totalSlides) * 100}%`;
+            pageNumber.textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Keyboard navigation (supports presenter remote)
+        document.addEventListener('keydown', (e) => {
+            // Right arrow, Space, Enter, Page Down, N - Next slide
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter' ||
+                e.key === 'PageDown' || e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                nextSlide();
+            }
+            // Left arrow, Page Up, P - Previous slide
+            if (e.key === 'ArrowLeft' || e.key === 'PageUp' ||
+                e.key === 'p' || e.key === 'P' || e.key === 'Backspace') {
+                e.preventDefault();
+                prevSlide();
+            }
+            // F key - Toggle fullscreen
+            if (e.key === 'f' || e.key === 'F') {
+                toggleFullScreen();
+            }
+            // Home - First slide
+            if (e.key === 'Home') {
+                currentSlide = 0;
+                showSlide(currentSlide);
+            }
+            // End - Last slide
+            if (e.key === 'End') {
+                currentSlide = totalSlides - 1;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Click navigation
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+            if (e.clientX > window.innerWidth / 2) nextSlide();
+            else prevSlide();
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold) nextSlide();
+            if (touchEndX > touchStartX + swipeThreshold) prevSlide();
+        }
+
+        // Fullscreen toggle
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Fullscreen error: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Initialize
+        showSlide(0);
+
+        // Render Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
